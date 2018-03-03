@@ -1,6 +1,42 @@
 import requests
 import bs4
 
+Events = [
+"Романтический вечер",
+"Торжество",
+"Сюрприз для нее",
+"Пост",
+"Новый год, Рождество",
+"Пасха",
+"Пикник",
+"Медовый Спас",
+'Яблочный Спас',
+'День Святого Валентина',
+'Масленица',
+'На 23 февраля',
+'на 8 марта',
+'Время дня']
+
+DayTime = ["Завтрак", "Обед", "Ужин", "Легко перекусить"]
+CookingTypes = ["Способ готовки",
+'Гриль',
+'Варим',
+'В духовке',
+'Жарим',
+'На костре',
+'На пару',
+'Замораживаем',
+'Консервируем',
+'В мультиварке']
+
+Diet = ['Диета',
+'Низкокалорийная',
+'Вегетарианская',
+'Фитнес',
+'Острые блюда',
+'Детям',
+'Низкоуглеводная',
+'Диета Дюкана']
 
 
 url = 'http://ligakulinarov.ru/recepty?sort=new&page='
@@ -31,13 +67,34 @@ for tmp_url in lst:
       ),'html.parser').find("span", {'class':'value oneline'})),'html.parser').get_text()
     print(difficulty)
     charachteristics_list = []
+    charachteristics_list1 = []
     tmp_charachteristics_list = []
     for a in soup.findAll("div", {'class':"item value"}):
         tmp_charachteristics_list.append(a.get_text().split('\n'))
     for charachteristic in tmp_charachteristics_list:
         for item in charachteristic:
             if item != "" or item != '':
+                charachteristics_list1.append(item)
+    typeWasChosen = False
+    timeWasChosen = False
+    dietWasChosen = False
+    CookingType = ""
+    TimeOfConsuming =""
+    diet = ""
+    for item in charachteristics_list1:
+        if item not in Events:
+            if item in CookingTypes and not(typeWasChosen):
+                CookingType += item
+                typeWasChosen = True
+            elif item in DayTime and not(timeWasChosen):
+                TimeOfConsuming += item
+                timeWasChosen = True
                 charachteristics_list.append(item)
-    print(charachteristics_list)
-
+            elif item in Diet and not(dietWasChosen):
+                diet += item
+                dietWasChosen = True
+                charachteristics_list.append(item)
+            else:
+                continue
+    print(CookingType, TimeOfConsuming, diet)
 """/html/body/div[2]/div[3]/div/div[1]/section/div/ul[3]/li[1]"""
