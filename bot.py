@@ -1,5 +1,6 @@
 import config
 import telebot
+from telebot import types
 
 bot = telebot.TeleBot(config.token)
 
@@ -12,11 +13,11 @@ def repeat_all_messages(message): # Название функции не игр�
 
 
 @bot.message_handler(content_types=["text"])
-def default_test(message):
+def any_msg(message):
     keyboard = types.InlineKeyboardMarkup()
-    url_button = types.InlineKeyboardButton(text="Перейти на Яндекс", url="https://ya.ru")
-    keyboard.add(url_button)
-    bot.send_message(message.chat.id, "Привет! Нажми на кнопку и перейди в поисковик.", reply_markup=keyboard)
+    callback_button = types.InlineKeyboardButton(text="Поехали", callback_data="test")
+    keyboard.add(callback_button)
+    bot.send_message(message.chat.id, "Привет! Я твой помощник в выборе блюда.", reply_markup=keyboard)
 
 if __name__ == '__main__':
      bot.polling(none_stop=True)
