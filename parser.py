@@ -1,6 +1,8 @@
 import requests
 import bs4
 
+
+
 url = 'http://ligakulinarov.ru/recepty?sort=new&page='
 ending = "#recipeboard"
 last = 259
