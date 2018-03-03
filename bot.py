@@ -20,5 +20,9 @@ def greetings(message):
 def instructions(message):
     bot.send_message(message.chat.id, config.INSTRUCTION_MESSAGE)
 
+@bot.message_handler(commands=["go"])
+def action(message):
+    bot.send_message(message.chat.id, "Здесь начнётся основная программа")
+
 if __name__ == '__main__':
     bot.polling(none_stop = True)
