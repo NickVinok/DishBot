@@ -9,9 +9,12 @@ def initiate_query(listOfChoises):
     for i in range(len(listOfChoises)):
         if listOfChoises[i] == "":
             listOfChoises[i] = "NULL"
-    print(listOfChoises)
     curr = db.cursor()
+    sqlstr = """SELECT Title, Link FROM Recipes WHERE Period = ? and Calories = ? and Difficulty = ? and Method = ?"""
 
+    curr.execute(sqlstr, (listOfChoises[0],listOfChoises[1],listOfChoises[2],listOfChoises[3]))
+    row = curr.fetchone()
+    return row
 
 def add_to_db():
     ps = parserWeb.Parser()

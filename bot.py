@@ -56,9 +56,14 @@ def test(msg):
         bot.register_next_step_handler(msg, test)
     elif msg.text in cooking_time:
         listOfChoises[4] = msg.text
-        initiate_query(listOfChoises)
-    elif msg.text == "Мне повезёт":
-        bot.send_message(msg.chat.id, "Счастливик")
+        result = initiate_query(listOfChoises)
+        keyboard = types.InlineKeyboardMarkup()
+        url_button = types.InlineKeyboardButton(text="Вот твой рецепт", url=result[1])
+        keyboard.add(url_button)
+        bot.send_message(msg.chat.id, result[0], reply_markup=keyboard)
+        bot.send_message(msg.chat.id, "Bon Appetit")
+
+
 
 
 if __name__ == '__main__':
