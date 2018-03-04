@@ -1,5 +1,6 @@
 import telebot
 import config
+import sqlite3
 from telebot import types
 
 bot = telebot.TeleBot(token=config.TOKEN)
