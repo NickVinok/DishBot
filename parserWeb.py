@@ -22,9 +22,9 @@ class Parser:
         Diet = ['Диета','Низкокалорийная','Вегетарианская','Фитнес','Острые блюда',
         'Детям','Низкоуглеводная','Диета Дюкана']
 
-
+        result = []
         counter = 0
-        for i in range(1, last//2):
+        for i in range(1, last//3):
             new_url = url + str(i) + ending
             r = requests.get(new_url)
             text = r.text
@@ -32,7 +32,6 @@ class Parser:
             lst = []
             Lis = soup.findAll("div", {"class": "author-wrap"})
             soup = bs4.BeautifulSoup(str(Lis), "html.parser")
-            result = []
             for a in soup.find_all('a', href=True):
                 if a["href"].startswith("/recepty") and a["href"] not in lst:
                     lst.append(a["href"])
@@ -83,5 +82,5 @@ class Parser:
                 counter+=1
                 result.append([ title, cook_time, difficulty, CookingType, TimeOfConsuming, diet, tmp_url])
         df1 = pd.DataFrame(result, columns=[ "Title", "Cook Time", "Difficulty",
-            "Method", "Period", "Calories", "Link"])
+        "Method", "Period", "Calories", "Link"])
         return df1
