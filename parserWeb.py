@@ -32,8 +32,6 @@ class Parser:
         """
         В этом цикле мы переходим на страницы рецептов
         И добавляем в список нужные нам данные
-        TODO переделать список в словарь, ибо это логичнее
-        Возможно стоит переделать в отдельный метод
         """
         for tmp_url in recipes_on_page:
             tmp_url = "http://ligakulinarov.ru" + tmp_url
@@ -41,49 +39,37 @@ class Parser:
             soup = bs4.BeautifulSoup(r.text, "html.parser")
 
             title = soup.find("h1").get_text().strip()
-            cook_time = self.finding_cooking_time(soup)[
-                1:-1]  #Избавляемся от фигурных скобок в начале и конце текста
+            cook_time = self.finding_cooking_time(soup)[1:-1]
+            #Избавляемся от фигурных скобок в начале и конце текста
             difficulty = self.finding_cooking_difficulty(soup)
+            dish_specs = self.finding_dish_charachteristics(soup)
 
-            charachteristics_list = []
-            charachteristics_list1 = []
-            tmp_charachteristics_list = []
-            for a in soup.findAll("div", {'class': "item value"}):
-                tmp_charachteristics_list.append(a.get_text().split('\n'))
-            for charachteristic in tmp_charachteristics_list:
-                for item in charachteristic:
-                    if item != "":
-                        charachteristics_list1.append(item)
-            typeWasChosen = False
-            timeWasChosen = False
-            dietWasChosen = False
-            CookingType = ""
-            TimeOfConsuming = ""
-            diet = ""
-            for item in charachteristics_list1:
-                if item not in EVENTS:
-                    if item in COOKINGTYPES and not (typeWasChosen):
-                        CookingType += item
-                        typeWasChosen = True
-                    elif item in DAYTIME and not (timeWasChosen):
-                        TimeOfConsuming += item
-                        timeWasChosen = True
-                        charachteristics_list.append(item)
-                    elif item in DIET and not (dietWasChosen):
-                        diet += item
-                        dietWasChosen = True
-                        charachteristics_list.append(item)
-                    else:
-                        continue
+            try:
+                main_ingr = soup.find("span", {
+                    'itemprop': 'recipeCategory'
+                }).get_text().split()
+            except:
+                main_ingr = ""
+
             self.final_dish_charachteristics.append({
-                "id": self.counter,
-                "Title": title,
-                "Cook Time": cook_time,
-                "Difficulty": difficulty,
-                "Method": CookingType,
-                "Period": TimeOfConsuming,
-                "Calories": diet,
-                "Link": tmp_url
+                "id":
+                self.counter,
+                "Title":
+                title,
+                "Main Ingredient":
+                main_ingr,
+                "Cook Time":
+                cook_time,
+                "Difficulty":
+                difficulty,
+                "Method":
+                dish_specs[0],
+                "Period":
+                dish_specs[1],
+                "Calories":
+                dish_specs[2],
+                "Link":
+                tmp_url
             })
             self.counter += 1
 
@@ -109,13 +95,26 @@ class Parser:
                         'class': 'value oneline'
                     })), 'html.parser').get_text()
 
+    def finding_dish_charachteristics(self, soup):
+        tmp_charachteristics_list = []
+        for a in soup.findAll("div", {'class': "item value"}):
+            tmp_charachteristics_list.append(a.get_text().split('\n'))
+        CookingType = list()
+        TimeOfConsuming = list()
+        diet = list()
+        for category in tmp_charachteristics_list:
+            for item in category:
+                if item not in EVENTS:
+                    if item in COOKINGTYPES:
+                        CookingType.append(item)
+                    elif item in DAYTIME:
+                        TimeOfConsuming.append(item)
+                    elif item in DIET:
+                        diet.append(item)
+                    else:
+                        continue
+        return ([CookingType, TimeOfConsuming, diet])
 
-"""
-df1 = pd.DataFrame(
-    result,
-    columns=[
-        "Title", "Cook Time", "Difficulty", "Method", "Period",
-        "Calories", "Link"
-    ])
-return df1
-"""
+
+ps = Parser()
+ps.parse_page_for_url()
